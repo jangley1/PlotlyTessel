@@ -34,7 +34,7 @@ var layout = {
     "filename": "streamSimpleSensor",
     "fileopt": "overwrite",
     "layout": {
-        "title": String(Date.now());
+        "title": String(Date.now())
     },
     "world_readable": true
 }
