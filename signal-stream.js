@@ -1,11 +1,14 @@
 console.log("Loading signal-stream.js");
 
 var Plotly = require('plotly')(); // Load Plotly _and execute the function_
-var Signal = require('random-signal'); // Load a library to generate a random signal
 
-Plotly['apiKey'] = ""; // Personal API key
-Plotly['username'] = ""; // Username
-Plotly['token'] = ""; // Stream token
+// Plotly['apiKey'] = ""; // Personal API key
+// Plotly['username'] = ""; // Username
+// Plotly['token'] = ""; // Stream token
+
+Plotly['apiKey'] = "9bbnwitbcm";
+Plotly['username'] = "aresnick";
+Plotly['token'] = "rqepd7vixd";
 
 
 console.log("Building a data object…");
@@ -31,7 +34,7 @@ var data = {
 console.log("Building a layout…");
 // build your layout and file options
 var layout = {
-    "filename": "streamSimpleSensor",
+    "filename": String(new Date()),
     "fileopt": "overwrite",
     "layout": {
         "title": String(Date.now())
@@ -61,11 +64,17 @@ function options(token) {
 
 ///// Setup plot
 
-var sigOpts = {
-    sep: "\n",
-    tdelta: 100
-}
-var signalstream = Signal(sigOpts);
+
+var Readable = require('readable-stream').Readable;
+
+var signalstream = new Readable();
+signalstream._read = function () {};
+
+setInterval(function() {
+    var data = { 'x': Date.now(), 'y': Math.random()*10 };
+    var dataToPush = JSON.stringify(data) + '\n';
+    signalstream.push(dataToPush);
+}, 250);
 
 
 Plotly.plot(data, layout, function(err, resp) {
@@ -75,13 +84,10 @@ Plotly.plot(data, layout, function(err, resp) {
 
     var plotlystream = Plotly.stream(Plotly.token, function() {});
 
-    plotlystream.on("error", function(err) {
-        signalstream.destroy()
-    })
-
     // Okay - stream to our plot!
-    signalstream.pipe(plotlystream)
-})
+    signalstream.pipe(plotlystream);
+});
+
 
 
 ///// Begin Plotting
@@ -93,7 +99,6 @@ var myOptions = options(Plotly.token);
 var plotly = hyperquest(myOptions);
 
 plotly.on("error", function(err) {
-    signalstream.destroy()
     console.log(err)
 })
 

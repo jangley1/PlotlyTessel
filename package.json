@@ -22,13 +22,13 @@
   },
   "homepage": "https://github.com/plotly/Streaming-Demos",
   "dependencies": {
-    "hyperquest": "~0.2.0",
-    "request": "~2.34.0",
     "JSONStream": "~0.8.0",
+    "csv": "~0.3.7",
+    "hyperquest": "~0.2.0",
     "plotly": "~0.2.0",
-    "random-signal": "~0.0.0",
+    "readable-stream": "^1.0.33",
+    "request": "~2.34.0",
     "twit": "~1.1.12",
-    "ya-csv": "~0.9.3",
-    "csv": "~0.3.7"
+    "ya-csv": "~0.9.3"
   }
 }
