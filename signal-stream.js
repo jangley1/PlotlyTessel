@@ -23,109 +23,112 @@
 function setupPlot(token, title, callback) {
     var Plotly = require('plotly')(); // Load Plotly _and execute the function_
 
-Plotly['apiKey'] = "xojqlgubes";
-Plotly['username'] = "jangley1";
-Plotly['token'] = token;
+    Plotly['apiKey'] = "xojqlgubes";
+    Plotly['username'] = "jangley1";
+    Plotly['token'] = token;
 
     console.log("Building a data object…");
-// build a data object - see https://plot.ly/api/rest/docs for information
-var data = {
-    'x': [] // empty arrays since we will be streaming our data to into these arrays
-        ,
-    'y': [],
-    'type': 'scatter',
-    'mode': 'lines+markers',
-    marker: {
-        color: "rgba(31, 119, 180, 0.96)"
-    },
-    line: {
-        color: "rgba(31, 119, 180, 0.31)"
-    },
-    stream: {
-        "token": token,
-        "maxpoints": 100
+    // build a data object - see https://plot.ly/api/rest/docs for information
+    var data = {
+        'x': [] // empty arrays since we will be streaming our data to into these arrays
+            ,
+        'y': [],
+        'type': 'scatter',
+        'mode': 'lines+markers',
+        marker: {
+            color: "rgba(31, 119, 180, 0.96)"
+        },
+        line: {
+            color: "rgba(31, 119, 180, 0.31)"
+        },
+        stream: {
+            "token": token,
+            "maxpoints": 100
+        }
     }
-}
 
-console.log("Building a layout…");
-// build your layout and file options
-var layout = {
-    "filename": title,
-    "fileopt": "overwrite",
-    "layout": {
-        "title": String(Date.now())
-    },
-    "world_readable": true
-}
+    console.log("Building a layout…");
+    // build your layout and file options
+    var layout = {
+        "filename": title,
+        "fileopt": "overwrite",
+        "layout": {
+            "title": String(Date.now())
+        },
+        "world_readable": true
+    }
 
-Plotly.plot(data, layout, function(err, resp) {
-    if (err) return console.log("ERROR", err)
+    Plotly.plot(data, layout, function(err, resp) {
+        if (err) return console.log("ERROR", err)
 
-    console.log(resp);
+        console.log(resp);
 
-    var plotlystream = Plotly.stream(token, function() {});
+        var plotlystream = Plotly.stream(token, function() {});
 
-var Readable = require('readable-stream').Readable;
+        var Readable = require('readable-stream').Readable;
 
-var signalstream = new Readable();
-signalstream._read = function () {};
+        var signalstream = new Readable();
+        signalstream._read = function() {};
 
-    // Okay - stream to our plot!
-    signalstream.pipe(plotlystream);
-    callback();
-});
+        // Okay - stream to our plot!
+        signalstream.pipe(plotlystream);
+        callback();
+    });
 }
 
 function sendData(token, x, y) {
-var Plotly = require('plotly')(); // Load Plotly _and execute the function_
+    var Plotly = require('plotly')(); // Load Plotly _and execute the function_
 
-Plotly['apiKey'] = "xojqlgubes";
-Plotly['username'] = "jangley1";
-Plotly['token'] = token;
+    Plotly['apiKey'] = "xojqlgubes";
+    Plotly['username'] = "jangley1";
+    Plotly['token'] = token;
 
-/// Begin Plotting
+    /// Begin Plotting
 
-console.log("Building streaming HTTP request and Plotly object…")
-var hyperquest = require('hyperquest');
+    console.log("Building streaming HTTP request and Plotly object…")
+    var hyperquest = require('hyperquest');
 
-//Function taken from https://gist.github.com/chriddyp/9882485 to generate an opts object for hyperequest
-function options(token) {
-    return {
-        method: 'POST',
-        uri: "http://stream.plot.ly",
-        port: 10101,
-        headers: {
-            "connection": "keepalive",
-            "plotly-streamtoken": token //stream_token
+    //Function taken from https://gist.github.com/chriddyp/9882485 to generate an opts object for hyperequest
+    function options(token) {
+        return {
+            method: 'POST',
+            uri: "http://stream.plot.ly",
+            port: 10101,
+            headers: {
+                "connection": "keepalive",
+                "plotly-streamtoken": token //stream_token
+            }
         }
-    }
-};
+    };
 
-var myOptions = options(token);
+    var myOptions = options(token);
 
-var plotly = hyperquest(myOptions);
+    var plotly = hyperquest(myOptions);
 
-plotly.on("error", function(err) {
-    console.log(err)
-})
+    plotly.on("error", function(err) {
+        console.log(err)
+    })
 
-var Readable = require('readable-stream').Readable;
+    var Readable = require('readable-stream').Readable;
 
-var signalstream = new Readable();
-signalstream._read = function () {};
+    var signalstream = new Readable();
+    signalstream._read = function() {};
 
 
-console.log("Beginning to stream!");
+    console.log("Beginning to stream!");
 
-    var data = { 'x': x, 'y': y};
+    var data = {
+        'x': x,
+        'y': y
+    };
     var dataToPush = JSON.stringify(data) + '\n';
     signalstream.push(dataToPush);
 
 
-// Okay - stream to our plot!
-signalstream.pipe(plotly);
+    // Okay - stream to our plot!
+    signalstream.pipe(plotly);
 }
 
-setupPlot("zvygzif4bz", 'Day' + Math.random()*10, function() { sendData("zvygzif4bz", 10, 10); });
-
-
+setupPlot("zvygzif4bz", 'Day' + Math.random() * 10, function() {
+    sendData("zvygzif4bz", 10, 10);
+});
