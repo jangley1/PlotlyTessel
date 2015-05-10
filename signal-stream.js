@@ -1,12 +1,33 @@
-console.log("Loading signal-stream.js");
+// console.log("Loading signal-stream.js");
 
-var Plotly = require('plotly')(); // Load Plotly _and execute the function_
+// console.log("Creating a Signal stream…");
+/*
+ * random signal stream options
+ * Plotly only accepts stringified newline seperated JSON
+ * so the separator is very important
+ */
 
-Plotly['apiKey'] = ""; // Personal API key
-Plotly['username'] = ""; // Username
-Plotly['token'] = ""; // Stream token
 
-console.log("Building a data object…");
+///// Setup plot
+
+
+
+// setInterval(function() {
+//     var data = { 'x': Date.now(), 'y': Math.random()*10 };
+//     var dataToPush = JSON.stringify(data) + '\n';
+//     signalstream.push(dataToPush);
+// }, 250);
+
+
+
+function setupPlot(token, title, callback) {
+    var Plotly = require('plotly')(); // Load Plotly _and execute the function_
+
+Plotly['apiKey'] = "xojqlgubes";
+Plotly['username'] = "jangley1";
+Plotly['token'] = token;
+
+    console.log("Building a data object…");
 // build a data object - see https://plot.ly/api/rest/docs for information
 var data = {
     'x': [] // empty arrays since we will be streaming our data to into these arrays
@@ -21,7 +42,7 @@ var data = {
         color: "rgba(31, 119, 180, 0.31)"
     },
     stream: {
-        "token": Plotly.token,
+        "token": token,
         "maxpoints": 100
     }
 }
@@ -29,7 +50,7 @@ var data = {
 console.log("Building a layout…");
 // build your layout and file options
 var layout = {
-    "filename": String(new Date()),
+    "filename": title,
     "fileopt": "overwrite",
     "layout": {
         "title": String(Date.now())
@@ -37,14 +58,37 @@ var layout = {
     "world_readable": true
 }
 
-console.log("Creating a Signal stream…");
-/*
- * random signal stream options
- * Plotly only accepts stringified newline seperated JSON
- * so the separator is very important
- */
+Plotly.plot(data, layout, function(err, resp) {
+    if (err) return console.log("ERROR", err)
 
-// Function taken from https://gist.github.com/chriddyp/9882485 to generate an opts object for hyperequest
+    console.log(resp);
+
+    var plotlystream = Plotly.stream(token, function() {});
+
+var Readable = require('readable-stream').Readable;
+
+var signalstream = new Readable();
+signalstream._read = function () {};
+
+    // Okay - stream to our plot!
+    signalstream.pipe(plotlystream);
+    callback();
+});
+}
+
+function sendData(token, x, y) {
+var Plotly = require('plotly')(); // Load Plotly _and execute the function_
+
+Plotly['apiKey'] = "xojqlgubes";
+Plotly['username'] = "jangley1";
+Plotly['token'] = token;
+
+/// Begin Plotting
+
+console.log("Building streaming HTTP request and Plotly object…")
+var hyperquest = require('hyperquest');
+
+//Function taken from https://gist.github.com/chriddyp/9882485 to generate an opts object for hyperequest
 function options(token) {
     return {
         method: 'POST',
@@ -57,39 +101,7 @@ function options(token) {
     }
 };
 
-///// Setup plot
-
-
-var Readable = require('readable-stream').Readable;
-
-var signalstream = new Readable();
-signalstream._read = function () {};
-
-setInterval(function() {
-    var data = { 'x': Date.now(), 'y': Math.random()*10 };
-    var dataToPush = JSON.stringify(data) + '\n';
-    signalstream.push(dataToPush);
-}, 250);
-
-
-Plotly.plot(data, layout, function(err, resp) {
-    if (err) return console.log("ERROR", err)
-
-    console.log(resp)
-
-    var plotlystream = Plotly.stream(Plotly.token, function() {});
-
-    // Okay - stream to our plot!
-    signalstream.pipe(plotlystream);
-});
-
-
-
-///// Begin Plotting
-
-console.log("Building streaming HTTP request and Plotly object…")
-var hyperquest = require('hyperquest');
-var myOptions = options(Plotly.token);
+var myOptions = options(token);
 
 var plotly = hyperquest(myOptions);
 
@@ -97,6 +109,23 @@ plotly.on("error", function(err) {
     console.log(err)
 })
 
+var Readable = require('readable-stream').Readable;
+
+var signalstream = new Readable();
+signalstream._read = function () {};
+
+
 console.log("Beginning to stream!");
+
+    var data = { 'x': x, 'y': y};
+    var dataToPush = JSON.stringify(data) + '\n';
+    signalstream.push(dataToPush);
+
+
 // Okay - stream to our plot!
 signalstream.pipe(plotly);
+}
+
+setupPlot("zvygzif4bz", 'Day' + Math.random()*10, function() { sendData("zvygzif4bz", 10, 10); });
+
+
