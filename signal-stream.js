@@ -18,6 +18,12 @@
 //     signalstream.push(dataToPush);
 // }, 250);
 
+var myDate = new Date()
+var splitDate = myDate.toString().split(' ')
+var titleMonth = splitDate[1]
+var titleDay = splitDate[2]
+var titleYear = splitDate[3]
+var titleDate = titleMonth + ' ' + titleDay + ", " + titleYear
 
 
 function setupPlot(token, title, callback) {
@@ -33,13 +39,9 @@ function setupPlot(token, title, callback) {
         'x': [] // empty arrays since we will be streaming our data to into these arrays
             ,
         'y': [],
-        'type': 'scatter',
-        'mode': 'lines+markers',
+        'type': 'bar',
         marker: {
-            color: "rgba(31, 119, 180, 0.96)"
-        },
-        line: {
-            color: "rgba(31, 119, 180, 0.31)"
+           color: "rgba(31, 119, 180, 0.96)"
         },
         stream: {
             "token": token,
@@ -53,7 +55,7 @@ function setupPlot(token, title, callback) {
         "filename": title,
         "fileopt": "overwrite",
         "layout": {
-            "title": String(Date.now())
+            "title": title
         },
         "world_readable": true
     }
@@ -129,6 +131,6 @@ function sendData(token, x, y) {
     signalstream.pipe(plotly);
 }
 
-setupPlot("zvygzif4bz", 'Day' + Math.random() * 10, function() {
+setupPlot("zvygzif4bz", titleDate, function() {
     sendData("zvygzif4bz", 10, 10);
 });
