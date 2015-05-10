@@ -2,14 +2,9 @@ console.log("Loading signal-stream.js");
 
 var Plotly = require('plotly')(); // Load Plotly _and execute the function_
 
-// Plotly['apiKey'] = ""; // Personal API key
-// Plotly['username'] = ""; // Username
-// Plotly['token'] = ""; // Stream token
-
-Plotly['apiKey'] = "9bbnwitbcm";
-Plotly['username'] = "aresnick";
-Plotly['token'] = "rqepd7vixd";
-
+Plotly['apiKey'] = ""; // Personal API key
+Plotly['username'] = ""; // Username
+Plotly['token'] = ""; // Stream token
 
 console.log("Building a data object…");
 // build a data object - see https://plot.ly/api/rest/docs for information
