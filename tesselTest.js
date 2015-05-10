@@ -1,4 +1,6 @@
 var tessel = require('tessel');
+var myPin = tessel.port['GPIO'].pin['G3'];
+var myPin2 = tessel.port['GPIO'].pin['G4'];
 
 var myUser = "jangley1";
 var myApi = "xojqlgubes";
@@ -14,13 +16,22 @@ function getTitle() {
     return titleDate;
 }
 
-var refresh = 250;
+var refresh = 30 * 1000;
 var getMyDataFunction = function(stream) {
     return function() {
-        var data = {
-            'x': Date.now(),
-            'y': Math.random() * 10
+        var myDate = new Date() 
+        var time = (myDate.getHours() -4) + ":" + myDate.getMinutes()
+        var yvalue = null;
+        if (myPin.read()==0) {
+            yvalue = 2
         }
+        else if (myPin2.read()==0) {
+            yvalue = 0
+        }
+        else if (myPin.read()==1 && myPin2.read()==1) {
+            yvalue = .5
+        }
+        var data = { 'x': time , 'y': yvalue};
 
         console.log("Sending", JSON.stringify(data));
         stream.write(JSON.stringify(data) + '\n');
@@ -69,4 +80,4 @@ function sendData(token, refreshRate) {
     });
 };
 
-sendData(myToken, 250);
+sendData(myToken, refresh);
